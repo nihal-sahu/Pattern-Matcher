@@ -1,0 +1,18 @@
+!SESSION 2022-03-28 21:38:27.480 -----------------------------------------------
+eclipse.buildId=Version 1.9.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_CA
+Command-line arguments:  -data /home/nihal/Desktop/Projects/pattern-matcher/i2c_setup -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-03-28 21:38:34.208
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-03-28 21:38:34.283
+!MESSAGE Log4j initialized with config file /home/nihal/Desktop/Projects/pattern-matcher/i2c_setup/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-03-28 21:38:37.791
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-03-28 21:40:10.349
+!MESSAGE Indexed 'stm32_i2c_setup' (22 sources, 82 headers) in 4.37 sec: 4,715 declarations; 22,494 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0073%)
