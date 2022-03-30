@@ -62,3 +62,21 @@ java.io.FileNotFoundException: /home/nihal/Desktop/Projects/pattern-matcher/i2c_
 	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1021)
 	at org.eclipse.debug.internal.ui.DebugUIPlugin$2.run(DebugUIPlugin.java:1224)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SESSION 2022-03-29 21:46:37.091 -----------------------------------------------
+eclipse.buildId=Version 1.9.0
+java.version=11.0.11
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_CA
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2022-03-29 21:46:39.056
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-03-29 21:46:42.271
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-03-29 21:46:42.351
+!MESSAGE Log4j initialized with config file /home/nihal/Desktop/Projects/pattern-matcher/i2c_setup/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-03-29 21:46:50.173
+!MESSAGE Started RMI Server, listening on port 41337
