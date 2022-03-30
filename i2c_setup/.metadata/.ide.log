@@ -965,3 +965,8 @@
 2022-03-28 21:53:14,695 [WARN] IP:2108 - Analog_Filter not found: check if there is a RefParameter without a condition.
 2022-03-28 21:53:14,696 [WARN] IP:2108 - I2C_Coeff_DF not found: check if there is a RefParameter without a condition.
 2022-03-28 21:53:14,696 [WARN] IP:2108 - Analog_Filter not found: check if there is a RefParameter without a condition.
+2022-03-29 19:32:12,898 [INFO] Activator:177 - 
+
+
+2022-03-29 19:32:12,902 [INFO] Activator:178 - !SESSION log4j initialized
+2022-03-29 19:32:21,419 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com

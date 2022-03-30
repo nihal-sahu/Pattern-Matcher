@@ -1,0 +1,9 @@
+#ifndef INC_PERIPHERAL_INIT_H_
+#define INC_PERIPHERAL_INIT_H_
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_USART2_UART_Init(void);
+static void MX_I2C1_Init(void);
+
+#endif /* INC_PERIPHERAL_INIT_H_ */

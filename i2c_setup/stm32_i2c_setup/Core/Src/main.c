@@ -1,4 +1,7 @@
+#include <stdint.h>
 #include "main.h"
+
+#define ARDUINO_ADDRESS (0x33<<1)	//arduino address
 
 I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
@@ -8,29 +11,38 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 
-#define ARDUINO_PRO_MICRO_I2C_RECEIVE_ADDRESS 0x33<<1
-unsigned char ArduinoProMicroI2CData[50];
-float var;
+uint8_t ArduinoDataBuffer[50] = {};				//received data buffer
+uint8_t STM32DataBuffer[50] = {};
+
 int main(void)
 {
 
-  HAL_Init();
-  SystemClock_Config();
+	//initialize i2c, gpio, and uart peripherals
+	HAL_Init();
+	SystemClock_Config();
+	MX_GPIO_Init();
+	MX_USART2_UART_Init();
+	MX_I2C1_Init();
 
-  MX_GPIO_Init();
-  MX_USART2_UART_Init();
-  MX_I2C1_Init();
 
-//  float primary, secondary;
+	//points to position of received data in the i2c buffer
+	uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[22];
 
-  while (1)
-  {
-	  while( HAL_I2C_Master_Receive(&hi2c1, ARDUINO_PRO_MICRO_I2C_RECEIVE_ADDRESS , ArduinoProMicroI2CData, 50, 100) != HAL_OK )
-	  {
-		  var = HAL_I2C_Master_Receive(&hi2c1, ARDUINO_PRO_MICRO_I2C_RECEIVE_ADDRESS , ArduinoProMicroI2CData, 50, 100);
-	  }
-	  HAL_Delay(1000);
-  }
+	//points to first element of buffer
+	uint8_t *sentData = (uint8_t*)&STM32DataBuffer[0];
+
+	while (1)
+	{
+		//wait until some i2c data is received by the arduino
+		while( HAL_I2C_Master_Receive(&hi2c1, ARDUINO_ADDRESS , ArduinoDataBuffer, 50, 100) != HAL_OK );
+
+		//wait for i2c data to be sent
+		while(HAL_I2C_Master_Transmit(&hi2c1, ARDUINO_ADDRESS, STM32DataBuffer, 1, 100) != HAL_OK);
+
+		HAL_Delay(1000);
+
+
+	}
 
 }
 
