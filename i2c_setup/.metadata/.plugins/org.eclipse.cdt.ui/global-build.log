@@ -1,0 +1,14 @@
+21:15:24 **** Incremental Build of configuration Debug for project stm32_i2c_setup ****
+make -j4 all 
+arm-none-eabi-size   stm32_i2c_setup.elf 
+   text	   data	    bss	    dec	    hex	filename
+  11924	     20	   1828	  13772	   35cc	stm32_i2c_setup.elf
+Finished building: default.size.stdout
+ 
+21:15:29 **** Incremental Build of configuration Debug for project stm32_i2c_setup ****
+make -j4 all 
+arm-none-eabi-size   stm32_i2c_setup.elf 
+   text	   data	    bss	    dec	    hex	filename
+  11924	     20	   1828	  13772	   35cc	stm32_i2c_setup.elf
+Finished building: default.size.stdout
+ 

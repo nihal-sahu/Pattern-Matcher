@@ -1,0 +1,29 @@
+#include "main.h"
+#include <stdint.h>
+
+#define ARDUINO_PRO_MICRO_I2C_RECEIVE_ADDRESS 0x33<<1
+uint8_t ArduinoProMicroI2CData[50] = {};
+uint8_t *receivedData;
+uint8_t dataBit;
+
+int main(void)
+{
+
+  HAL_Init();
+  SystemClock_Config();
+
+  MX_GPIO_Init();
+  MX_USART2_UART_Init();
+  MX_I2C1_Init();
+
+//  float primary, secondary;
+
+  ptr = (uint8_t*)&ArduinoProMicroI2CData[22];
+  while (1)
+  {
+	  while( HAL_I2C_Master_Receive(&hi2c1, ARDUINO_PRO_MICRO_I2C_RECEIVE_ADDRESS , ArduinoProMicroI2CData, 50, 100) != HAL_OK );
+	  HAL_Delay(1000);
+  }
+
+}
+
