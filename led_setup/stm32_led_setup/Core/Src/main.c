@@ -18,6 +18,12 @@ void receiveData();
 
 uint8_t ArduinoDataBuffer[50] = {};				//received data buffer
 uint8_t STM32DataBuffer[50] = {};				//sent data buffer
+
+//points to position of received data in the i2c buffer
+uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[22];
+//points to first element of sent data in buffer
+uint8_t *sentData = (uint8_t*)&STM32DataBuffer[0];
+
 uint16_t led_arr[3] = {GPIO_PIN_8, GPIO_PIN_6, GPIO_PIN_5};
 
 uint16_t level = 3;
@@ -36,11 +42,6 @@ int main(void)
 	srand(time(0));
 
 
-	//points to position of received data in the i2c buffer
-	uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[22];
-
-	//points to first element of buffer
-	uint8_t *sentData = (uint8_t*)&STM32DataBuffer[0];
 
 	while (1)
 	{
