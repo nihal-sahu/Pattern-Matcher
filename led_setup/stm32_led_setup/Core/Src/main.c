@@ -13,10 +13,16 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 void led_pattern();
+void sendData();
+void receiveData();
 
 uint8_t ArduinoDataBuffer[50] = {};				//received data buffer
-uint8_t STM32DataBuffer[50] = {};
+uint8_t STM32DataBuffer[50] = {};				//sent data buffer
 uint16_t led_arr[3] = {GPIO_PIN_8, GPIO_PIN_6, GPIO_PIN_5};
+
+uint16_t level = 3;
+uint8_t gameState = 0;
+
 
 int main(void)
 {
@@ -38,17 +44,20 @@ int main(void)
 
 	while (1)
 	{
-		led_pattern();
+		//To start a pattern generation
+		*sentData = level;
+		sendData();
 
-		//wait until some i2c data is received by the arduino
-		while(HAL_I2C_Master_Receive(&hi2c1, ARDUINO_ADDRESS , ArduinoDataBuffer, 50, 100) != HAL_OK );
+		for (uint16_t i = 0; i < level; ++i)
+		{
+			led_pattern();
+		}
 
-		//wait for i2c data to be sent
-		while(HAL_I2C_Master_Transmit(&hi2c1, ARDUINO_ADDRESS, STM32DataBuffer, 1, 100) != HAL_OK);
+
+
+
 
 		HAL_Delay(1000);
-
-
 	}
 
 }
@@ -59,6 +68,21 @@ void led_pattern()
 	HAL_GPIO_TogglePin(GPIOC, led_arr[led]);
 	HAL_Delay(150);
 	HAL_GPIO_TogglePin(GPIOC, led_arr[led]);
+
+	*sentData = led;
+	sendData();
+}
+
+void sendData()
+{
+	//wait for i2c data to be sent
+	while(HAL_I2C_Master_Transmit(&hi2c1, ARDUINO_ADDRESS, STM32DataBuffer, 1, 100) != HAL_OK);
+}
+
+void receiveData()
+{
+	//wait until some i2c data is received by the arduino
+	while(HAL_I2C_Master_Receive(&hi2c1, ARDUINO_ADDRESS , ArduinoDataBuffer, 50, 100) != HAL_OK );
 }
 
 void SystemClock_Config(void)

@@ -4,7 +4,9 @@
 #define STM32_ADDRESS 0x33    //address of STM32 Nucleo 
 int counter = 0;
 
-uint8_t receivedData, sentData;
+uint8_t receivedData = 0, sentData = 0;
+uint16_t level = 0;
+uint8_t *led_pattern;
 
 void setup() {
   //setting up i2c
@@ -19,18 +21,27 @@ void loop() { }
 
 void requestEvent()   //when data is requested by the STM32
 {
-  counter++;
-
-  if (counter > 9)
-    counter = 0;
-  String data = "Counter from Arduino: " + String(counter);
-  Serial.println(data);
-  Wire.write(data.c_str());  
+  Wire.write(sentData);  
 }
 
 void receiveEvent(int howMany)   //when data is received from the STM32
 {
   receivedData = Wire.read();
-  Serial.println(int(receivedData));
-  delay(1000);
+
+  if (receivedData > 2)
+  {
+    led_pattern = new uint8_t[receivedData]; 
+    level = receivedData;
+    counter = receivedData;
+  }
+  else 
+  {
+    led_pattern[counter-1] = receivedData;
+    counter--;
+    
+    if (counter < 0)
+    {
+      sentData = 3;
+    }
+  }
 }
