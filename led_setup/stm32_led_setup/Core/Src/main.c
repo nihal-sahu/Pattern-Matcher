@@ -20,6 +20,11 @@ uint8_t ArduinoDataBuffer[50] = {};				//received data buffer
 uint8_t STM32DataBuffer[50] = {};				//sent data buffer
 uint16_t led_arr[3] = {GPIO_PIN_8, GPIO_PIN_6, GPIO_PIN_5};
 
+//points to position of received data in the i2c buffer
+uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[0];
+//points to first element of buffer
+uint8_t *sentData = (uint8_t*)&STM32DataBuffer[0];
+
 uint16_t level = 3;
 uint8_t gameState = 0;
 
@@ -36,11 +41,7 @@ int main(void)
 	srand(time(0));
 
 
-	//points to position of received data in the i2c buffer
-	uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[22];
 
-	//points to first element of buffer
-	uint8_t *sentData = (uint8_t*)&STM32DataBuffer[0];
 
 	while (1)
 	{
@@ -53,11 +54,16 @@ int main(void)
 			led_pattern();
 		}
 
+		receiveData();
 
+		while (*receivedData != 3)
+		{
+			receiveData();
+		}
 
+		level++;
 
-
-		HAL_Delay(1000);
+		HAL_Delay(2500);
 	}
 
 }
@@ -65,8 +71,9 @@ int main(void)
 void led_pattern()
 {
 	uint8_t led = (rand() % (2 - 0 + 1)) + 0;
+	HAL_Delay(1000);
 	HAL_GPIO_TogglePin(GPIOC, led_arr[led]);
-	HAL_Delay(150);
+	HAL_Delay(1000);
 	HAL_GPIO_TogglePin(GPIOC, led_arr[led]);
 
 	*sentData = led;

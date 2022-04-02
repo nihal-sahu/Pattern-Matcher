@@ -6,7 +6,7 @@ int counter = 0;
 
 uint8_t receivedData = 0, sentData = 0;
 uint16_t level = 0;
-uint8_t *led_pattern;
+uint8_t led_pattern[1000];
 
 void setup() {
   //setting up i2c
@@ -21,7 +21,7 @@ void loop() { }
 
 void requestEvent()   //when data is requested by the STM32
 {
-  Wire.write(sentData);  
+  Wire.write(String(sentData).c_str());  
 }
 
 void receiveEvent(int howMany)   //when data is received from the STM32
@@ -30,18 +30,27 @@ void receiveEvent(int howMany)   //when data is received from the STM32
 
   if (receivedData > 2)
   {
-    led_pattern = new uint8_t[receivedData]; 
     level = receivedData;
-    counter = receivedData;
+    counter = 0;
   }
   else 
   {
-    led_pattern[counter-1] = receivedData;
-    counter--;
+    led_pattern[counter] = receivedData;
+    counter++;
     
-    if (counter < 0)
+    if (counter == level)
     {
-      sentData = 3;
+      sentData = 3;     
+
+
+      Serial.println("PATTERN: ");
+      //print the array contents 
+      for (int i = 0; i < level; ++i)
+      {
+        Serial.print(led_pattern[i]);
+      }
+
+      Serial.println(" ");
     }
   }
 }
