@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 #include "main.h"
 
 #define ARDUINO_ADDRESS (0x33<<1)	//arduino address
@@ -12,23 +13,28 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
-void led_pattern();
+void led_pattern_gen();
 void sendData();
 void receiveData();
+uint8_t button_matching();
+bool pattern_check();
+void next_level();
 
 uint8_t ArduinoDataBuffer[50] = {};				//received data buffer
 uint8_t STM32DataBuffer[50] = {};				//sent data buffer
-
+uint8_t led_pattern[100] = {};					//store the led pattern
+uint8_t bttn_pattern[100] = {};					//store the users button presses
 
 //points to position of received data in the i2c buffer
-uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[22];
+uint8_t *receivedData = (uint8_t*)&ArduinoDataBuffer[0];
 //points to first element of buffer
 uint8_t *sentData = (uint8_t*)&STM32DataBuffer[0];
 
 uint16_t led_arr[3] = {GPIO_PIN_8, GPIO_PIN_6, GPIO_PIN_5};
+uint16_t bttn_arr[3] = {GPIO_PIN_15, GPIO_PIN_14, GPIO_PIN_13};
 
-uint16_t level = 4;
-uint8_t gameState = 0;
+uint16_t level = 3;
+uint16_t counter = 0;
 
 
 
@@ -47,41 +53,89 @@ int main(void)
 	//game loop
 	while (1)
 	{
-		//To start a pattern generation
+		//START PATTERN GENERATION
+
+		//send level to arduino to display on 7 Segment
 		*sentData = level;
 		sendData();
 
+		//light LED's and generate pattern
 		for (uint16_t i = 0; i < level; ++i)
 		{
-			led_pattern();
+			led_pattern_gen();
 		}
 
-		*sentData = 3;
-		sendData();
+		for (uint16_t i = 0; i < level; ++i)
+		{
+			bttn_pattern[i] = button_matching();
+			HAL_Delay(250);
+		}
 
-		receiveData();
+		//if an error was found
+		if (!pattern_check())
+			break;
 
-//		while (*receivedData == 3)
-//		{
-//			receiveData();
-//		}
-
-
-
-		HAL_Delay(1000);
+		//if an error wasn't found
+		next_level();
+		HAL_Delay(3000);
 	}
 
 }
 
-void led_pattern()
+void led_pattern_gen()
 {
 	uint8_t led = (rand() % (2 - 0 + 1)) + 0;
+
+	HAL_Delay(500);
 	HAL_GPIO_TogglePin(GPIOC, led_arr[led]);
-	HAL_Delay(150);
+	HAL_Delay(500);
 	HAL_GPIO_TogglePin(GPIOC, led_arr[led]);
 
-	*sentData = led;
-	sendData();
+	led_pattern[counter] = led;
+	counter++;
+}
+
+uint8_t button_matching()
+{
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15))
+	{
+		if (!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15))
+		{
+			return 0;
+		}
+		else if (!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14))
+		{
+			return 1;
+		}
+		else if (!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13))
+		{
+			return 2;
+		}
+	}
+}
+
+bool pattern_check()
+{
+	for (int i = 0; i < level; ++i)
+	{
+		if (led_pattern[i] != bttn_pattern[i])
+			return false;
+	}
+
+	return true;
+}
+
+void next_level()
+{
+	//reset user button and led patterns
+	for (int i = 0; i < level; ++i)
+	{
+		led_pattern[i] = 0;
+		bttn_pattern[i] = 0;
+	}
+
+	level++;
+	counter = 0;
 }
 
 void sendData()
@@ -93,7 +147,7 @@ void sendData()
 void receiveData()
 {
 	//wait until some i2c data is received by the arduino
-	while(HAL_I2C_Master_Receive(&hi2c1, ARDUINO_ADDRESS , ArduinoDataBuffer, 50, 100) != HAL_OK );
+	while(HAL_I2C_Master_Receive(&hi2c1, ARDUINO_ADDRESS , ArduinoDataBuffer, 50, 100) != HAL_OK);
 }
 
 void SystemClock_Config(void)
@@ -165,7 +219,6 @@ static void MX_USART2_UART_Init(void)
   }
 }
 
-
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -202,6 +255,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PB13 PB14 PB15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
 }
 
 void Error_Handler(void)
@@ -217,7 +276,6 @@ void Error_Handler(void)
 
 void assert_failed(uint8_t *file, uint32_t line)
 {
-
 }
-#endif
 
+#endif /* USE_FULL_ASSERT */
